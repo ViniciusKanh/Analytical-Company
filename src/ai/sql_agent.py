@@ -9,7 +9,7 @@ class SQLAgent:
         self.db = AnalyticalCompanyDB()
         
     def get_database_schema(self) -> str:
-        """Retorna uma descrição do schema do banco de dados"""
+        """Retorna uma descrição do schema do banco de dados """
         
         schema_description = """
 SCHEMA DO BANCO DE DADOS ANALYTICAL COMPANY:
