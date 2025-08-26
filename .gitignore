@@ -9,11 +9,7 @@ __pycache__/
 *.pyo
 
 # Ignorar arquivos de banco de dados
-*.db
-*.sqlite
-*.sqlite3
-/src/database/*.db
-/src/database/chroma_db/
+
 
 # Ignorar arquivos de log
 *.log
