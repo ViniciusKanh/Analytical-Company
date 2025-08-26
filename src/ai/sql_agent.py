@@ -163,28 +163,87 @@ QUERY SQL:"""
         else:
             # Se não conseguiu extrair, retorna a resposta original limpa
             return response.strip()
-    
+
+    def _normalize_table_names(self, sql_query: str) -> str:
+        """Garante que as tabelas fact/dim usem o prefixo dw_ e atualiza os aliases."""
+        tables = self.db.get_all_tables()
+        mapping = {tbl[3:]: tbl for tbl in tables if tbl.startswith('dw_')}
+
+        for base, full in mapping.items():
+            # Substituir referência de tabela em FROM/JOIN sem prefixo
+            sql_query = re.sub(rf'(?i)(FROM|JOIN)\s+{base}\b', rf'\1 {full}', sql_query)
+
+            # Detectar alias após correção
+            alias_match = re.search(rf'(?i)(FROM|JOIN)\s+{full}\s+(?:AS\s+)?(\w+)', sql_query)
+            alias = alias_match.group(2) if alias_match else None
+
+            if alias:
+                sql_query = re.sub(rf'\b{base}\.', f'{alias}.', sql_query)
+            else:
+                sql_query = re.sub(rf'\b{base}\.', f'{full}.', sql_query)
+
+            sql_query = re.sub(rf'\b{base}\b', full, sql_query)
+
+        return sql_query
+
+    def _fix_sql_query(self, sql_query: str, error_msg: str) -> Optional[str]:
+        """Tenta corrigir uma query SQL com base no schema e na mensagem de erro"""
+
+        schema = self.get_database_schema()
+        prompt = f"""A seguinte query SQL apresentou erro:
+{sql_query}
+
+ERRO: {error_msg}
+
+Considerando o schema abaixo, corrija a query mantendo o mesmo objetivo.
+{schema}
+
+QUERY CORRIGIDA:"""
+
+        try:
+            response = ollama.chat(
+                model=self.ollama_model,
+                messages=[{'role': 'user', 'content': prompt}]
+            )
+            corrected = self._clean_sql_response(response['message']['content'].strip())
+            return corrected
+        except Exception:
+            return None
+
     def process_query(self, user_input: str, chat_history: list = None) -> Dict[str, Any]:
         """Processa uma consulta SQL completa"""
-        
+
         try:
             # Verificar se é uma query pré-definida
             predefined_query = self.check_predefined_queries(user_input)
-            
+
             if predefined_query and predefined_query in PREDEFINED_QUERIES:
                 sql_query = PREDEFINED_QUERIES[predefined_query]
                 query_source = 'predefined'
             else:
                 # Gerar query usando IA
                 sql_query = self.generate_sql_query(user_input, chat_history)
+                sql_query = self._normalize_table_names(sql_query)
                 query_source = 'generated'
-            
-            # Executar a query
-            results, columns = self.db.execute_query(sql_query)
-            
+
+            try:
+                # Executar a query
+                results, columns = self.db.execute_query(sql_query)
+            except Exception as e:
+                if 'no such column' in str(e).lower():
+                    corrected = self._fix_sql_query(sql_query, str(e))
+                    if corrected:
+                        sql_query = self._normalize_table_names(corrected)
+                        query_source = 'corrected'
+                        results, columns = self.db.execute_query(sql_query)
+                    else:
+                        raise
+                else:
+                    raise
+
             # Gerar resposta em linguagem natural
             response_text = self._generate_response_text(user_input, results, columns, sql_query)
-            
+
             return {
                 'response': response_text,
                 'sql_query': sql_query,
@@ -195,7 +254,7 @@ QUERY SQL:"""
                     'row_count': len(results)
                 }
             }
-            
+
         except Exception as e:
             return {
                 'response': f'Desculpe, ocorreu um erro ao executar a consulta SQL: {str(e)}',
