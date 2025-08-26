@@ -369,7 +369,6 @@ Este projeto foi desenvolvido por Vinicius Santos para fins de demonstração e 
 **Vinicius Santos**
 
 -   **Email**: vinicius.santos@ifsp.edu.br
--   **Foto de Perfil**: [Link da Foto](https://media.licdn.com/dms/image/v2/D4D03AQFWKIYIP-Tdng/profile-displayphoto-crop_800_800/B4DZjD2zUQGgAQ-/0/1755632584170?e=1759363200&v=beta&t=9qdv44n25-YQUkNlyO_VcTLx_eFj3HoVNSh6fEb9Xgw)
 
 ---
 
