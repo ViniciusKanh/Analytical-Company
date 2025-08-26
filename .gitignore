@@ -1,0 +1,50 @@
+# Ignorar ambiente virtual
+venv/
+.venv/
+
+# Ignorar arquivos de cache e compilação do Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Ignorar arquivos de banco de dados
+*.db
+*.sqlite
+*.sqlite3
+/src/database/*.db
+/src/database/chroma_db/
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos de configuração sensíveis (se houver)
+.env
+
+# Ignorar arquivos de IDEs (ex: VS Code)
+.vscode/
+.idea/
+
+# Ignorar arquivos de sistema operacional
+.DS_Store
+thumbs.db
+
+# Ignorar arquivos gerados pelo Ollama (se forem criados fora do diretório chroma_db)
+ollama_models/
+
+# Ignorar arquivos de empacotamento
+dist/
+build/
+*.egg-info/
+
+# Ignorar arquivos de teste
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ignorar arquivos temporários
+*.tmp
+*~
+
+# Ignorar arquivos de upload (se houver)
+/uploads/

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA-Assistente | Analytical Company</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h2>IA-Assistente</h2>
+                        <p>Analytical Company</p>
+                    </div>
+                </div>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Nova Conversa</span>
+                </button>
+            </div>
+            
+            <div class="chat-list" id="chatList">
+                <div class="chat-list-header">
+                    <h3>Conversas Recentes</h3>
+                </div>
+                <div class="chat-items" id="chatItems">
+                    <!-- Chat items will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">Usuário</span>
+                        <span class="user-status">Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="chat-header">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="chat-title">
+                    <h1 id="currentChatTitle">Chat CAGED — Empregos Formais</h1>
+                    <p id="currentChatSubtitle">Converse com os dados do CAGED (SQL + RAG)</p>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" id="clearChatBtn" title="Limpar conversa">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="action-btn" id="settingsBtn" title="Configurações">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome message -->
+                    <div class="message assistant-message welcome-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                <h3>Bem-vindo ao IA-Assistente da Analytical Company! 🚀</h3>
+                                <p>Sou seu assistente especializado em análise de dados. Posso ajudá-lo com:</p>
+                                <ul>
+                                    <li><strong>Consultas SQL</strong> - Análise de dados específicos, métricas e relatórios</li>
+                                    <li><strong>Busca Semântica</strong> - Informações conceituais e explicações</li>
+                                    <li><strong>Insights</strong> - Interpretação de dados e recomendações</li>
+                                </ul>
+                                <p>Experimente perguntar algo como: <em>"Qual foi a receita total do último trimestre?"</em> ou <em>"Explique como funciona nosso Data Warehouse"</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="message assistant-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="typing-animation">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <div class="input-group">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Pergunte sobre o CAGED..."
+                            rows="1"
+                            maxlength="2000"
+                        ></textarea>
+                        <button id="sendButton" class="send-btn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <div class="input-info">
+                            <span class="char-count">0/2000</span>
+                            <span class="separator">•</span>
+                            <span class="ai-status" id="aiStatus">
+                                <i class="fas fa-circle status-online"></i>
+                                IA Online
+                            </span>
+                        </div>
+                        <div class="input-actions">
+                            <button class="action-btn" id="attachBtn" title="Anexar arquivo">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="action-btn" id="micBtn" title="Gravação de voz">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Processando sua solicitação...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
