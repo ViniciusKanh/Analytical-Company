@@ -201,6 +201,7 @@ QUERY CORRIGIDA:"""
             else:
                 # Gerar query usando IA
                 sql_query = self.generate_sql_query(user_input, chat_history)
+                sql_query = self._normalize_table_names(sql_query)
                 query_source = 'generated'
 
             try:
