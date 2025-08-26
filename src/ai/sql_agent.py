@@ -164,28 +164,6 @@ QUERY SQL:"""
             # Se não conseguiu extrair, retorna a resposta original limpa
             return response.strip()
 
-    def _normalize_table_names(self, sql_query: str) -> str:
-        """Garante que as tabelas fact/dim usem o prefixo dw_ e atualiza os aliases."""
-        tables = self.db.get_all_tables()
-        mapping = {tbl[3:]: tbl for tbl in tables if tbl.startswith('dw_')}
-
-        for base, full in mapping.items():
-            # Substituir referência de tabela em FROM/JOIN sem prefixo
-            sql_query = re.sub(rf'(?i)(FROM|JOIN)\s+{base}\b', rf'\1 {full}', sql_query)
-
-            # Detectar alias após correção
-            alias_match = re.search(rf'(?i)(FROM|JOIN)\s+{full}\s+(?:AS\s+)?(\w+)', sql_query)
-            alias = alias_match.group(2) if alias_match else None
-
-            if alias:
-                sql_query = re.sub(rf'\b{base}\.', f'{alias}.', sql_query)
-            else:
-                sql_query = re.sub(rf'\b{base}\.', f'{full}.', sql_query)
-
-            sql_query = re.sub(rf'\b{base}\b', full, sql_query)
-
-        return sql_query
-
     def _fix_sql_query(self, sql_query: str, error_msg: str) -> Optional[str]:
         """Tenta corrigir uma query SQL com base no schema e na mensagem de erro"""
 
@@ -233,7 +211,7 @@ QUERY CORRIGIDA:"""
                 if 'no such column' in str(e).lower():
                     corrected = self._fix_sql_query(sql_query, str(e))
                     if corrected:
-                        sql_query = self._normalize_table_names(corrected)
+                        sql_query = corrected
                         query_source = 'corrected'
                         results, columns = self.db.execute_query(sql_query)
                     else:
